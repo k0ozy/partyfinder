@@ -298,3 +298,17 @@ class ClassSelect(discord.ui.Select):
 if not TOKEN:
     raise SystemExit("DISCORD_BOT_TOKEN env var not set")
 bot.run(TOKEN)
+# ─── Keep Render happy by faking a port listener ───
+import threading
+import socket
+
+def keep_alive():
+    sock = socket.socket()
+    sock.bind(('0.0.0.0', 10000))  # Any port >1024 is fine
+    sock.listen(1)
+    while True:
+        conn, addr = sock.accept()
+        conn.close()
+
+# Run the fake server in a background thread
+threading.Thread(target=keep_alive, daemon=True).start()
